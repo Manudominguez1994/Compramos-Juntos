@@ -15,13 +15,7 @@ export default function Signup(props) {
           placeholder="Name"
          />
          <br/>
-         <label >  </label>
-          <input 
-          type="text"
-          name="surname"
-          placeholder="Surname"
-         />
-         <br/>
+         
           <label >  </label>
           <input 
           type="email"
@@ -34,6 +28,13 @@ export default function Signup(props) {
           type="password"
           name="password"
           placeholder="PassWord"
+         />
+         <br/>
+         <label > </label>
+          <input 
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm PassWord"
          />
         </form>
       </div>
