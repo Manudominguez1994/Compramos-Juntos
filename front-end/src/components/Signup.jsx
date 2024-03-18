@@ -90,7 +90,7 @@ export default function Signup(props) {
         </form>
       </div>
       <h3>
-        Ya tienes cuenta? Haz login aquí{" "}
+      Already have an account ? login here{" "}
         <button onClick={() => props.handleSetButton(3)}>
           <Link to={"/"}>Log In</Link>
         </button>

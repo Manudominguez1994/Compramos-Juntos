@@ -1,6 +1,7 @@
 
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import IsPrivate from './components/IsPrivate'
 
 import Home from './pages/Home'
 import Principal from './pages/Principal'
@@ -23,8 +24,8 @@ function App() {
 
         {/*Private Page*/}
 
-        <Route path='/home' element={<Principal/>}/>
-        <Route path='/myprofile' element={<MyProfile/>}/>
+        <Route path='/home' element={<IsPrivate><Principal/></IsPrivate>}/>
+        <Route path='/myprofile' element={<IsPrivate><MyProfile/></IsPrivate>}/>
 
 
         {/*Gestion de errores*/}

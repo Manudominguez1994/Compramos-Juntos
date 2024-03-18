@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import Login from "../components/Login";
 import SignUp from "../components/Signup";
 
+import { useContext } from 'react'
+import { AuthContext } from '../../context/auth.context'
+
 export default function Home() {
   const [buttonSwitch, setButton] = useState(1);
 
-  // console.log(buttonSwitch);
+
 
   const handleSetButton = (buttonNumber) => {
     setButton(buttonNumber);

@@ -4,8 +4,13 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../../context/auth.context";
 
 export default function Login(props) {
+
+  const { verifyToken } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -18,21 +23,27 @@ export default function Login(props) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
 
     try {
-      
-    const response = await service.post("/auth/login",{
-      email,
-      password
-    })
-    console.log(response);
-      navigate("/home")
+      const response = await service.post("/auth/login", {
+        email,
+        password,
+      });
+      // console.log(response);
+
+      //Guardar en el local storage el token.
+
+      localStorage.setItem("authToken", response.data);
+
+      await verifyToken();
+
+      navigate("/home");
     } catch (error) {
-      if(error.response && error.response.status === 400){
-        setError(error.response.data.errorMessage)
-      }else{
-      navigate("/error");}
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.errorMessage);
+      } else {
+        navigate("/error");
+      }
     }
   };
 
@@ -59,7 +70,7 @@ export default function Login(props) {
             onChange={handlePasswordChange}
             placeholder="Introduce aqui tu contraseña"
           />
-          <br/>
+          <br />
           <button>Log In</button>
         </form>
       </div>
