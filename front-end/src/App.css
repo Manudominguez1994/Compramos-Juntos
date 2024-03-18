@@ -1,8 +1,17 @@
-#root {
 
+
+  #root {
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  height: 100vh; /* Esto asegura que el contenedor ocupe toda la altura de la ventana */
   text-align: center;
 }
 
 a{
   margin: 10px
+}
+.leaflet-container {
+  height: 400px; 
+  width: 400px; 
 }

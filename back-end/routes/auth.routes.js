@@ -6,7 +6,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 
 //Ruta Post Registrar el usuario
 router.post("/signup", async (req, res, next) => {
-  const { name, email, password, confirmPassword, dateborn } = req.body;
+  const { name, email, password, confirmPassword, dateborn, coordinates } = req.body;
   console.log("quiero ver req.body", req.body);
 
   //   //! Validaciones de usuario
@@ -64,6 +64,7 @@ router.post("/signup", async (req, res, next) => {
       email: email,
       password: hashPassword,
       dateborn: dateborn,
+      coordinates: coordinates
     });
     // console.log("usuario creado en DB", response);
     res.json("Usuario creado");

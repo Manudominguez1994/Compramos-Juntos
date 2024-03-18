@@ -20,7 +20,7 @@ const userSchema = new Schema(
     },
     imagen:{
       type: String,
-      default: "public/profile-picture-default-png.png"
+      default: "/public/profile-picture-default-png.png"
     },
     dateborn: {
       type: Date
