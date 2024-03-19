@@ -5,7 +5,7 @@ const isAuthenticated = jwt({
   algorithms: ["HS256"],
   requestProperty: "payload",
   getToken: (req) => {
-    console.log(req.headers);
+    // console.log(req.headers);
 
     if (req.headers === undefined || req.headers.authorization === undefined) {
       console.log("Token no entregado");

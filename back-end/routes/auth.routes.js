@@ -7,7 +7,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 //Ruta Post Registrar el usuario
 router.post("/signup", async (req, res, next) => {
   const { name, email, password, confirmPassword, dateborn, coordinates } = req.body;
-  console.log("quiero ver req.body", req.body);
+  // console.log("quiero ver req.body", req.body);
 
   //   //! Validaciones de usuario
   
@@ -82,7 +82,7 @@ router.post("/login", async (req, res, next) => {
 
     //Usuario existente
     const foundUser = await User.findOne({ email });
-    console.log(foundUser);
+    // console.log(foundUser);
     if (foundUser === null) {
       res.status(400).json({ errorMessage: "Email no registrado" });
       return;

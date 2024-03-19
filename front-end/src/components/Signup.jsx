@@ -28,7 +28,7 @@ export default function Signup(props) {
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
   const handleDateBorn = (e) => setConfirmDateBorn(e.target.value);
-  // const handleCoordinates = (e) => setClickedPosition(e.target.value);
+  
 
   const handleSignup = async (e) => {
     e.preventDefault();

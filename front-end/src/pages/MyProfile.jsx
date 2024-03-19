@@ -3,15 +3,21 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import service from "../services/service.config";
+import EditProfile from "../components/EditProfile";
 
 function MyProfile() {
   const navigate = useNavigate();
 
+  const [editButton, setEditButton] = useState(true);
   const [infoUser, setInfoUser] = useState(null);
 
   useEffect(() => {
     getUserInfo();
   }, []);
+
+  const handleSetEditButton = (value) => {
+    setEditButton(value);
+  };
 
   const getUserInfo = async () => {
     try {
@@ -27,11 +33,26 @@ function MyProfile() {
     <div>
       <Navbar />
       <h1>My Profile</h1>
-      {infoUser && (
-        <>
-          <img src={infoUser.imagen} alt="Profile Picture" />
-          <h3>{infoUser.name}</h3>
-        </>
+      {editButton === true ? (
+        infoUser && (
+          <>
+            <img
+              src={infoUser.imagen}
+              alt="Profile Picture"
+              style={{ width: "200px" }}
+            />
+            <h3>{infoUser.name}</h3>
+            <p>{infoUser.email}</p>
+            <p>{infoUser.dateborn.split("T")[0].split("-").reverse().join("-")}</p>
+            <button onClick={handleSetEditButton}>Edit Profile</button>
+          </>
+        )
+      ) : (
+        <EditProfile
+          handleSetEditButton={handleSetEditButton}
+          infoUser={infoUser}
+          getUserInfo={getUserInfo}
+        />
       )}
     </div>
   );
