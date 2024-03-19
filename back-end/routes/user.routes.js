@@ -16,13 +16,14 @@ router.get("/myprofile", isAuthenticated, async (req, res, next) => {
 //Edit Profile
 router.put("/editprofile", isAuthenticated, async (req, res, next) => {
   const { name, image, dateborn, coordinates } = req.body;
+  console.log("req.body.image",req.body.image);
 
   try {
     await User.findByIdAndUpdate(
       req.payload._id,
       {
         name,
-        image,
+        imagen:image,
         dateborn,
         coordinates
       },
