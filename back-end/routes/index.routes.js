@@ -16,4 +16,7 @@ router.use("/upload", uploadRoutes);
 const productRoutes = require("./product.routes");
 router.use("/product", productRoutes);
 
+const groupRoutes = require("./group.routes");
+router.use("/group", groupRoutes);
+
 module.exports = router;

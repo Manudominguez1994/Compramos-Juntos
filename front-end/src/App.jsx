@@ -10,6 +10,7 @@ import NotFound from './pages/NotFound'
 import Error from './pages/Error'
 import CreateGroup from './pages/CreateGroup'
 import Categories from './pages/Categories'
+import GroupDetails from './pages/GroupDetails'
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
         <Route path='/myprofile' element={<IsPrivate><MyProfile/></IsPrivate>}/>
         <Route path='/creategroup' element={<IsPrivate><CreateGroup/></IsPrivate>}/>
         <Route path='/categories' element={<IsPrivate><Categories/></IsPrivate>}/>
+        <Route path='/groupdetails/:groupid' element={<IsPrivate><GroupDetails/></IsPrivate>}/>
 
 
         {/*Gestion de errores*/}

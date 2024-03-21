@@ -25,7 +25,14 @@ const groupSchema = new Schema(
       status:{
         type: Boolean,
         default: true
-      }, 
+      },
+      date:{
+        type: String
+      },
+      hour:{
+        type: String
+      },
+      chat:[],
       coordinates: [Number]
     },
     {  

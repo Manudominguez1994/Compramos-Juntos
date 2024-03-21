@@ -3,30 +3,30 @@
     "id": 0,
     "name": "Rice",
     "categorie": "Food",
-    "image": "rice"
+    "image": "rice.jpg"
   },
   {
     "id": 1,
     "name": "Flour",
     "categorie": "Food",
-    "image": "flour"
+    "image": "flour.png"
   },
   {
     "id": 2,
     "name": "Potatoes",
     "categorie": "Food",
-    "image": "potato"
+    "image": "potato.jpg"
   },
   {
     "id": 3,
     "name": "Toilet Paper",
     "categorie": "Home",
-    "image": "toiletpaper"
+    "image": "toiletpaper.jpg"
   },
   {
     "id": 4,
     "name": "Detergent",
     "categorie": "Home",
-    "image": "toiletpaper"
+    "image": "detergent.jpg"
   }
 ]
