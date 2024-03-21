@@ -4,11 +4,14 @@ import App from "./App.jsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthWrapper } from "../context/auth.context.jsx";
+import { ProductsProvider } from "../context/product.context.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthWrapper>
-      <App />
+      <ProductsProvider>
+        <App />
+      </ProductsProvider>
     </AuthWrapper>
   </BrowserRouter>
 );
