@@ -1,0 +1,32 @@
+[
+  {
+    "id": 0,
+    "name": "Rice",
+    "categorie": "Food",
+    "image": "rice"
+  },
+  {
+    "id": 1,
+    "name": "Flour",
+    "categorie": "Food",
+    "image": "flour"
+  },
+  {
+    "id": 2,
+    "name": "Potatoes",
+    "categorie": "Food",
+    "image": "potato"
+  },
+  {
+    "id": 3,
+    "name": "Toilet Paper",
+    "categorie": "Home",
+    "image": "toiletpaper"
+  },
+  {
+    "id": 4,
+    "name": "Detergent",
+    "categorie": "Home",
+    "image": "toiletpaper"
+  }
+]
