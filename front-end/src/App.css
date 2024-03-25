@@ -18,7 +18,7 @@ a{
 .modal {
   /* Estilos para posicionar el modal en el centro */
   position: fixed;
-  top: 50%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: black;
@@ -50,4 +50,9 @@ a{
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+.error-message {
+ 
+  z-index: 999; /* Asegura que esté en la parte superior */
 }

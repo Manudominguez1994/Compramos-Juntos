@@ -4,7 +4,7 @@ const isAuthenticated = require("../middlewares/isAuthenticated");
 
 //POST => /group/create
 router.post("/create", isAuthenticated, async (req, res, next) => {
-  const { name, date, hour, coordinates, products } = req.body;
+  const { name, date, hour, coordinates, products, users } = req.body;
   const liderUser = req.payload._id;
   // Validar campos vacíos
   if ( !name || !date || !hour || !coordinates) {
@@ -21,7 +21,8 @@ router.post("/create", isAuthenticated, async (req, res, next) => {
       date,
       hour,
       coordinates,
-      products
+      products,
+      users
     });
     res.json("grupocreado");
   } catch (error) {

@@ -15,22 +15,20 @@ function CreateGroup() {
   const navigate = useNavigate();
 
   const ActiveUserId = useContext(AuthContext);
-  
+
   const { allProducts } = useContext(ProductsContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [errorMessage, setError] = useState("");
-  
-  // console.log(filteredProducts);
-  
+
   //Estado de Grupos
   const [nameLider, setNameLider] = useState("");
   const [nameGroup, setNameGroup] = useState("");
   const [dateGroup, setDateGroup] = useState("");
   const [hourGroup, setHourGroup] = useState("");
   const [productArrayGroup, setProductArrayGroup] = useState([]);
-  const [usersArrayGroup , setUsersArrayGroup] = useState([]);
-  
-  
+
+  const array = [];
+
   //Estados de Productos
   const [nameProduct, setNameProduct] = useState("");
   const [imageProduct, setImageProduct] = useState("");
@@ -46,7 +44,6 @@ function CreateGroup() {
   useEffect(() => {
     getUserInfo();
     setProductArrayGroup([]);
-    setUsersArrayGroup([])
   }, []);
 
   //Datos Usuario Lider
@@ -86,8 +83,8 @@ function CreateGroup() {
   const handleHourChange = (e) => {
     setHourGroup(e.target.value);
   };
-  const handleAddUserLiderToUsers= () => {
-    usersArrayGroup.push(ActiveUserId.ActiveUserId)
+  const handleAddUserLiderToUsers = () => {
+    array.push(ActiveUserId.ActiveUserId);
   };
   //Funciones Producto
   const handleCategorieSelection = (selectedCategorie) => {
@@ -117,6 +114,12 @@ function CreateGroup() {
 
   const handleCreateGroup = async (e) => {
     e.preventDefault();
+    handleAddUserLiderToUsers();
+    if (productArrayGroup.length === 0) {
+      setError("Para crear un grupo, debes agregar al menos un producto.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     try {
       const response = await service.post("/group/create", {
         name: nameGroup,
@@ -124,11 +127,10 @@ function CreateGroup() {
         coordinates: clickedPosition,
         date: dateGroup,
         hour: hourGroup,
-        products:productArrayGroup
+        products: productArrayGroup,
+        users: array,
       });
-      // setSelectedProduct(response.data);
-      handleAddUserLiderToUsers()
-  console.log(usersArrayGroup);
+
       navigate(`/groupdetails/${response.data._id}`);
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -142,11 +144,11 @@ function CreateGroup() {
 
   const handleCreateProduct = async (e) => {
     e.preventDefault();
-    console.log("intento entrar al try ");
+
     try {
       const response = await service.post("/product/create", {
         nombre: nameProduct,
-        imagen: imageProduct, // Enviar la URL de la imagen del producto seleccionado
+        imagen: imageProduct, 
         categoria: categorieProduct,
         cantidad: quantityProduct,
         unidad: unidadProduct,
@@ -154,7 +156,6 @@ function CreateGroup() {
       });
       setShowFormProduct(false);
       setProductArrayGroup([...productArrayGroup, response.data]);
-      console.log(response.data, "producto creado  en front");
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data.errorMessage);
@@ -168,12 +169,11 @@ function CreateGroup() {
   const closeModal = () => {
     setError("");
   };
-  
 
   return (
     <div>
       <Navbar />
-      <h1>CreateGroup</h1>
+      <div className="error-message">
       {errorMessage && (
         <div className="modal">
           <div className="modal-content">
@@ -185,8 +185,43 @@ function CreateGroup() {
           </div>
         </div>
       )}
+      </div>
+      <h1>CreateGroup</h1>
+      {allProducts ? (
+        <>
+       
+          <form>
+            <label>Elige un nombre para tu grupo</label>
+            <input type="text" name="name" onChange={handleNameGroup} />
+
+            <br />
+            <label>
+              {" "}
+              <h4>
+                selecciona en el mapa el lugar de entrega, una fecha y una hora{" "}
+              </h4>
+              <input type="date" name="date" onChange={handleDateGroupChange} />
+              <input type="time" name="hour" onChange={handleHourChange} />
+            </label>
+            <MapContainer center={center} zoom={11} scrollWheelZoom={false}>
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <ClickMarker setClickedPosition={setClickedPosition} />
+              {clickedPosition !== null && (
+                <Marker position={clickedPosition} />
+              )}
+            </MapContainer>
+            <br />
+          </form>
+          <br />
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
       <label>
-        <h3>Añade un producto al grupo de compra:</h3>
+        <h3>Añade un producto al grupo de compra :</h3>
       </label>
       <h4>Categorias :</h4>
       <div>
@@ -239,39 +274,8 @@ function CreateGroup() {
           <button>Añadir producto</button>
         </form>
       ) : null}
-      {allProducts ? (
-        <>
-          <form onSubmit={handleCreateGroup}>
-            <label>Elige un nombre para tu grupo</label>
-            <input type="text" name="name" onChange={handleNameGroup} />
-
-            <br />
-            <label>
-              {" "}
-              <h4>
-                selecciona en el mapa el lugar de entrega, una fecha y una hora{" "}
-              </h4>
-              <input type="date" name="date" onChange={handleDateGroupChange} />
-              <input type="time" name="hour" onChange={handleHourChange} />
-            </label>
-            <MapContainer center={center} zoom={11} scrollWheelZoom={false}>
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <ClickMarker setClickedPosition={setClickedPosition} />
-              {clickedPosition !== null && (
-                <Marker position={clickedPosition} />
-              )}
-            </MapContainer>
-            <br />
-            <button>Create Group</button>
-          </form>
-          <br />
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+      <br />
+      <button onClick={handleCreateGroup}>Create Group</button>
     </div>
   );
 }
