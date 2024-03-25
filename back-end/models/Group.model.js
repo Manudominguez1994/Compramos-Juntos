@@ -1,7 +1,9 @@
 const { Schema, model } = require("mongoose");
 
-const groupSchema = new Schema(
-    {
+const groupSchema = new Schema({
+      name:{
+      type:String
+    },
       liderUser:{
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -11,17 +13,10 @@ const groupSchema = new Schema(
         type: Schema.Types.ObjectId,
         ref: "User",
       }],
-      product: {
-        type: String,
-        require: true
-      },
-      categorie:{
-        type: String,
-        require: true
-      },
-      quantity:{
-        type: Number
-      },
+      products: [{
+        type: Schema.Types.ObjectId,
+        ref: "Product",
+      }],
       status:{
         type: Boolean,
         default: true

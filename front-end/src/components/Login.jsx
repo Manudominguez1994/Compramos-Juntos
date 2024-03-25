@@ -76,7 +76,7 @@ export default function Login(props) {
       </div>
       <div>
         <h3>
-          ¿No tienes cuenta? Regístrate aquí{" "}
+        Don't have an account? Register here{" "}
           <button onClick={() => props.handleSetButton(2)}>
             <Link to={"/"}>Sign Up</Link>
           </button>

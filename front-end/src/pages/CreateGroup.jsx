@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/auth.context";
 import { ProductsContext } from "../../context/product.context";
 
 //Imports Map
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import ClickMarker from "../components/ClickMarker";
 
 import service from "../services/service.config";
@@ -18,23 +18,28 @@ function CreateGroup() {
 
   const { allProducts } = useContext(ProductsContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  //   console.log(allProducts,"productos en componente")
-
   const [errorMessage, setError] = useState("");
 
+  //Estado de Grupos
   const [nameLider, setNameLider] = useState("");
-  const [liderUser, setLiderUser] = useState(ActiveUserId.ActiveUserId);
-  const [categorieGroup, setCategorieGroup] = useState("");
-  const [productGroup, setProductGroup] = useState("");
-  const [quantityProduct, setQuantityProduct] = useState(0);
-  const [dateGroup, setDateGroup] = useState("")
-  const [hourGroup, setHourGroup] = useState("")
+  const [nameGroup, setNameGroup] = useState("");
+  const [dateGroup, setDateGroup] = useState("");
+  const [hourGroup, setHourGroup] = useState("");
+
+  //Estados de Productos
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [categorieProduct, setCategorieProduct] = useState("");
+  const [quantityProduct, setQuantityProduct] = useState(1);
+  const [unidadProduct, setUnidadProduct] = useState("");
+
+  //Mapa
   const [center, setCenter] = useState([4.60971, -74.08175]);
   const [clickedPosition, setClickedPosition] = useState(null);
 
   useEffect(() => {
     getUserInfo();
   }, []);
+
   //Datos Usuario Lider
   const getUserInfo = async () => {
     try {
@@ -44,46 +49,63 @@ function CreateGroup() {
       navigate(error);
     }
   };
+
   useEffect(() => {
     // Filtrar productos cuando cambia la categoría seleccionada
-    if (categorieGroup) {
+    if (categorieProduct) {
       const filtered = allProducts.filter(
-        (product) => product.categorie === categorieGroup
-      );
+        (product) => product.categorie === categorieProduct
+      ).map((product) => ({
+        ...product,
+        quantity: 0, // Inicialmente la cantidad es 0
+        unit: "",   // Inicialmente la unidad es vacía
+        price: 0    // Inicialmente el precio es 0
+      }));
       setFilteredProducts(filtered);
     }
-  }, [categorieGroup, allProducts]);
+  }, [categorieProduct, allProducts]);
+
+  const handleNameGroup = (e) => {
+    setNameGroup(e.target.value);
+  };
+
+  const handleProductSelection = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleDateGroupChange = (e) => {
+    setDateGroup(e.target.value);
+  };
+
+  const handleHourChange = (e) => {
+    setHourGroup(e.target.value);
+  };
 
   const handleCategorieSelection = (selectedCategorie) => {
-    setCategorieGroup(selectedCategorie);
+    setCategorieProduct(selectedCategorie);
   };
-  const handleProductSelection = (selectedProduct) => {
-    setProductGroup(selectedProduct.name);
+
+  const handleQuantityChange = (productId, quantity) => {
+    // Actualizar la cantidad del producto seleccionado
+    setQuantityProduct(quantity);
   };
-  const handleQuantityChange = (e) => {
-    setQuantityProduct(e.target.value);
+
+  const handleUnidadChange = (productId, unidad) => {
+    // Actualizar la unidad del producto seleccionado
+    setUnidadProduct(unidad);
   };
-  const handleDateGroupChange = (e) => {
-    setDateGroup(e.target.value)
-  }
-  const handleHourChange = (e) => {
-    setHourGroup(e.target.value)
-  }
 
   const handleCreateGroup = async (e) => {
     e.preventDefault();
     try {
-      const response =  await service.post("/group/create",{
-            liderUser:nameLider,
-            product: productGroup,
-            categorie:categorieGroup,
-            quantity:quantityProduct,
-            coordinates: clickedPosition,
-            date: dateGroup,
-            hour:hourGroup
-        })
-        // console.log(response);
-        navigate(`/groupdetails/${response.data._id}`)
+      const response = await service.post("/group/create", {
+        name: nameGroup,
+        liderUser: nameLider,
+        coordinates: clickedPosition,
+        date: dateGroup,
+        hour: hourGroup,
+      });
+      navigate(`/groupdetails/${response.data._id}`);
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data.errorMessage);
@@ -92,11 +114,33 @@ function CreateGroup() {
         navigate("/error");
       }
     }
-  }
-  const closeModal = () => {
-    setError('');
   };
-  
+
+  const handleCreateProduct = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await service.post("/product/create", {
+        nombre: selectedProduct.name,
+        imagen: selectedProduct.image, // Enviar la URL de la imagen del producto seleccionado
+        categoria: selectedProduct.categorie,
+        cantidad: quantityProduct,
+        unidad: unidadProduct,
+      });
+      console.log(response);
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.errorMessage);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/error");
+      }
+    }
+  };
+
+  const closeModal = () => {
+    setError("");
+  };
+
   return (
     <div>
       <Navbar />
@@ -104,7 +148,9 @@ function CreateGroup() {
       {errorMessage && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={closeModal}>&times;</span>
+            <span className="close" onClick={closeModal}>
+              &times;
+            </span>
             <p>{errorMessage}</p>
             <button onClick={closeModal}>Cerrar</button>
           </div>
@@ -112,61 +158,83 @@ function CreateGroup() {
       )}
       {allProducts ? (
         <form onSubmit={handleCreateGroup}>
+          <label>Elige un nombre para tu grupo</label>
+          <input type="text" name="name" onChange={handleNameGroup} />
+          <br />
           <label>Lider</label>
           <h3>{nameLider}</h3>
           <br />
-          <label>Categorie</label>
+          <label>
+            <h3>Añade un producto al grupo de compra:</h3>
+          </label>
+          <h4>Seleccion una categoria :</h4>
           <div>
-            <button
-              type="button"
-              onClick={() => handleCategorieSelection("Food")}
-            >
-              Food
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCategorieSelection("Home")}
-            >
-              Home
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCategorieSelection("Medicines")}
-            >
-              Medicines
-            </button>
+            <select onChange={(e) => handleCategorieSelection(e.target.value)}>
+              <option value="Comida">Comida</option>
+              <option value="Limpieza y Hogar">Limpieza y Hogar</option>
+              <option value="Medicinas">Medicinas</option>
+            </select>
+            <br />
           </div>
-          <br />
-          <h2>Products:</h2>
-          {filteredProducts.length > 0 && (
-            <div style={{ width: "400px" }}>
+          <form>
+            <h4>Selecciona un producto de la categoría {categorieProduct}</h4>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
               {filteredProducts.map((product) => (
-                <button
+                <div
                   key={product.id}
-                  type="button"
-                  onClick={() => handleProductSelection(product)}
+                  style={{ margin: "10px", textAlign: "center" }}
                 >
-                  <img src={product.image} style={{ width: "300px" }} />
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{ width: "150px" }}
+                  />
                   <h4>{product.name}</h4>
-                </button>
+                  <label>Cantidad:</label>
+                  <input
+                    type="number"
+                    value={product.quantity || 1}
+                    onChange={(e) =>
+                      handleQuantityChange(product.id, e.target.value)
+                    }
+                  />
+                  <br />
+                  <label>Unidad:</label>
+                  <input
+                    type="text"
+                    value={product.unit || ""}
+                    onChange={(e) =>
+                      handleUnidadChange(product.id, e.target.value)
+                    }
+                  />
+                  <br />
+                  <label>Precio:</label>
+                  <input
+                    type="number"
+                    value={product.price || 0}
+                    onChange={(e) =>
+                      handlePriceChange(product.id, e.target.value)
+                    }
+                  />
+                  <br />
+                </div>
               ))}
             </div>
-          )}
+            <button onClick={() => handleProductSelection(product)}>
+              Añadir productos
+            </button>
+          </form>
+          <h2>Products:</h2>
+  
           <br />
-          <label>
-            <h4>Cantidad: </h4>
-          </label>
-          <input
-            type="number"
-            name="quantity"
-            onChange={handleQuantityChange}
-          />
           <br />
           <label>
             {" "}
-            <h4>selecciona en el mapa el lugar de entrega, una fecha y  una hora  </h4>
-            <input type="date" name="date" onChange={handleDateGroupChange}/>
-            <input type="time" name="hour" onChange={handleHourChange}/>
+            <h4>
+              selecciona en el mapa el lugar de entrega, una fecha y una hora{" "}
+            </h4>
+            <input type="date" name="date" onChange={handleDateGroupChange} />
+            <input type="time" name="hour" onChange={handleHourChange} />
           </label>
           <MapContainer center={center} zoom={11} scrollWheelZoom={false}>
             <TileLayer

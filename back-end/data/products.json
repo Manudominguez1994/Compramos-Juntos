@@ -1,32 +1,32 @@
 [
   {
     "id": 0,
-    "name": "Rice",
-    "categorie": "Food",
+    "name": "Arroz",
+    "categorie": "Comida",
     "image": "rice.jpg"
   },
   {
     "id": 1,
-    "name": "Flour",
-    "categorie": "Food",
+    "name": "Harina",
+    "categorie": "Comida",
     "image": "flour.png"
   },
   {
     "id": 2,
-    "name": "Potatoes",
-    "categorie": "Food",
+    "name": "Patata",
+    "categorie": "Comida",
     "image": "potato.jpg"
   },
   {
     "id": 3,
-    "name": "Toilet Paper",
-    "categorie": "Home",
+    "name": "Papel Igienico",
+    "categorie": "Limpieza y Hogar",
     "image": "toiletpaper.jpg"
   },
   {
     "id": 4,
-    "name": "Detergent",
-    "categorie": "Home",
+    "name": "Detergente",
+    "categorie": "Limpieza y Hogar",
     "image": "detergent.jpg"
   }
 ]

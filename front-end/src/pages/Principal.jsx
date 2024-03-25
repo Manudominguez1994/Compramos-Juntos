@@ -10,7 +10,7 @@ function Principal() {
         
         <h1>Principal</h1>
         <Link to={"/creategroup"}><button>Create group</button></Link>
-        <Link to={"/categories"}><button>Join Group</button></Link>
+        <Link to={"/allGroups"}><button>Join Group</button></Link>
 
     </div>
   )
