@@ -27,6 +27,10 @@ const groupSchema = new Schema({
       hour:{
         type: String
       },
+      distance: {
+        type: Number,
+        default: 0
+      },
       chat:[],
       coordinates: [Number]
     },

@@ -7,13 +7,19 @@ import { AuthContext } from "../../context/auth.context";
 import { ProductsContext } from "../../context/product.context";
 
 function AllGroupsFilter() {
+  
   const navigate = useNavigate();
+  const ActiveUserId = useContext(AuthContext);
+
+  //*Informacion  de usuario
+  const [infoUser, setInfoUser] = useState("");
+  
 
   //* Productos y productos filtrados
   const { allProducts } = useContext(ProductsContext);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [errorMessage, setError] = useState("");
-  // console.log(allProducts, "todos mis productos provinientes del contexto");
+  
   //* Grupos y grupos filtrados
   const [allGroups, setAllGroups] = useState([]);
   const [allGruopsFilterAdd, setAllGruopsFilterAdd] = useState([]);
@@ -26,7 +32,37 @@ function AllGroupsFilter() {
   //* Ciclo de vida  del componente
   useEffect(() => {
     getAllGroups();
+    getUserInfo();
   }, []);
+  
+  //*Funcion para info de usuario
+  const getUserInfo = async () => {
+  
+    try {
+      const response = await service.get("/user/myprofile");
+     
+      
+      setInfoUser(response.data);
+    } catch (error) {
+      navigate(error);
+    }
+  };
+  //*Funcion para comparar las coordenadas
+  function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const radioTierra = 6371; 
+
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distancia = radioTierra * c;
+    // console.log(distancia);
+    return distancia;
+}
 
   //*Funciones cambio de componente
   const handleSetComponent2 = (value) => {
@@ -52,6 +88,7 @@ function AllGroupsFilter() {
   const getAllGroups = async () => {
     try {
       const response = await service.get("/group/allgroups");
+      
       setAllGroups(response.data);
     } catch (error) {
       navigate(error);
@@ -59,13 +96,25 @@ function AllGroupsFilter() {
   };
   //Filtro por producto
   const handleGroupFilterProduct = (value) => {
+    //?Filtro de Producto
     const arrayGroupFilter = allGroups.filter((group) =>
       group.products.some((producto) => producto.nombre === value)
     );
-    setAllGruopsFilterAdd(arrayGroupFilter);
+    //?Filtro de distancia
+    // Calcula la distancia entre el usuario y cada grupo
+    
+    const latUsuario = infoUser.coordinates[0]; 
+    const lonUsuario = infoUser.coordinates[1]; 
+    const gruposCercanos = arrayGroupFilter.map(group => {
+      const distancia = calcularDistancia(latUsuario, lonUsuario, group.coordinates[0], group.coordinates[1]);
+      return {...group, distancia}; // Añade la distancia al objeto del grupo
+    }).filter(group => group.distancia < 26)
+ 
+    setAllGruopsFilterAdd(gruposCercanos);
     setChangeProductGroup(false);
+    // console.log(gruposCercanos);
   };
-  console.log(allGruopsFilterAdd);
+  // console.log(distanciaEntre);
 
   return (
     <div>
@@ -111,19 +160,22 @@ function AllGroupsFilter() {
             <Link key={group._id}>
               <div style={{ backgroundColor: "white" }}>
                 <div>
-                  {group.products.map((product) => {
-                    <div>
-                      <img src={product.imagen} style={{ width: "150px" }} />
-                      <h4>{product.nombre}</h4>
-                    </div>;
-                  })}
+                  {group.products.map((element) => (
+                    <div key={element._id}>
+                      <img src={element.imagen} style={{ width: "150px" }} />
+                      <h4>{element.nombre}</h4>
+                    </div>
+                  ))}
                 </div>
-                <h3>{group.name}</h3>
-                <p>Esta x lejos de ti</p>
-                <h5>
-                  Estado :{" "}
-                  {group.status === true ? <p>Abierto</p> : <p>Cerrado</p>}
-                </h5>
+                <div>
+                  <h3>{group.name}</h3>
+                  <h3>{group.liderUser.name}</h3>
+                  <p>Esta a {group.distancia.toFixed(2)} km de ti</p>
+                  <h5>
+                    Estado :{" "}
+                    {group.status === true ? <p>Abierto</p> : <p>Cerrado</p>}
+                  </h5>
+                </div>
               </div>
             </Link>
           ))}
