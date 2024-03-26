@@ -2,31 +2,31 @@
   {
     "id": 0,
     "name": "Arroz",
-    "categorie": "Comida",
+    "categorie": "Alimentos",
     "image": "rice.jpg"
   },
   {
     "id": 1,
     "name": "Harina",
-    "categorie": "Comida",
+    "categorie": "Alimentos",
     "image": "flour.png"
   },
   {
     "id": 2,
     "name": "Patata",
-    "categorie": "Comida",
+    "categorie": "Alimentos",
     "image": "potato.jpg"
   },
   {
     "id": 3,
     "name": "Papel Igienico",
-    "categorie": "Limpieza y Hogar",
+    "categorie": "Higiene",
     "image": "toiletpaper.jpg"
   },
   {
     "id": 4,
     "name": "Detergente",
-    "categorie": "Limpieza y Hogar",
+    "categorie": "Higiene",
     "image": "detergent.jpg"
   }
 ]

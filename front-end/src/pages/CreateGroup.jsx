@@ -227,8 +227,8 @@ function CreateGroup() {
       <div>
         <select onChange={(e) => handleCategorieSelection(e.target.value)}>
           <option value="">Selecciona una categoria</option>
-          <option value="Comida">Comida</option>
-          <option value="Limpieza y Hogar">Limpieza y Hogar</option>
+          <option value="Alimentos">Alimentos</option>
+          <option value="Higiene">Higiene</option>
           <option value="Medicinas">Medicinas</option>
         </select>
         <br />

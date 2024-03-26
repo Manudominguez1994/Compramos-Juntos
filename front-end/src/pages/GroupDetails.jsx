@@ -1,8 +1,11 @@
 import React from 'react'
+import Navbar from "../components/Navbar";
 
 function GroupDetails() {
   return (
-    <div>GroupDetails</div>
+    <div>
+      <Navbar/>
+      GroupDetails</div>
   )
 }
 
