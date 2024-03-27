@@ -45,6 +45,7 @@ function AllGroupsFilter() {
       navigate(error);
     }
   };
+
   //*Funcion para comparar las coordenadas
   function calcularDistancia(lat1, lon1, lat2, lon2) {
     const radioTierra = 6371;
@@ -64,6 +65,7 @@ function AllGroupsFilter() {
     // console.log(distancia);
     return distancia;
   }
+
   //*Funciones cambio de componente
   const handleSetComponent = (componentNumber, value) => {
     if (componentNumber === 2) {
@@ -72,10 +74,9 @@ function AllGroupsFilter() {
         (item) => item.categorie === value
       );
       setFilteredProducts(arrayfilter);
-    } 
+    }
     setVisibleComponent(componentNumber);
   };
-  
 
   //? Grupos filtrado por producto
   //*Peticion de todos los grupos
@@ -88,18 +89,18 @@ function AllGroupsFilter() {
       navigate(error);
     }
   };
-  //*Filtro por producto
+
   const handleGroupFilterProduct = (value) => {
-    //!Filtro de Producto
+    //! Filtro de Producto
     const arrayGroupFilter = allGroups.filter((group) =>
       group.products.some((producto) => producto.nombre === value)
     );
-    //!Filtro de distancia
-    // Calcula la distancia entre el usuario y cada grupo
 
+    //! Filtro de distancia y usuarios dentro del grupo
+    // Calcula la distancia entre el usuario y cada grupo
     const latUsuario = infoUser.coordinates[0];
     const lonUsuario = infoUser.coordinates[1];
-    const gruposCercanos = arrayGroupFilter
+    const gruposFiltrados = arrayGroupFilter
       .map((group) => {
         const distancia = calcularDistancia(
           latUsuario,
@@ -111,17 +112,43 @@ function AllGroupsFilter() {
       })
       .filter((group) => group.distancia < 50);
 
-    setAllGruopsFilterAdd(gruposCercanos);
+    const filterDef = gruposFiltrados.filter((group) => {
+      console.log("Usuarios en el grupo:", group.users);
+      console.log("ID de usuario activo:", ActiveUserId.ActiveUserId);
+      return group.users.every(
+        (user) => user._id !== ActiveUserId.ActiveUserId
+      );
+    });
+
+    console.log(gruposFiltrados, "grupos sin el filtro");
+    console.log(
+      filterDef,
+      "grupos en los que es usuario Nooooooooooooo se encuentra"
+    );
+    setAllGruopsFilterAdd(filterDef);
     handleSetComponent(3);
-    
-    // console.log(gruposCercanos);
   };
+
+  //* Funcion para añadir usuario al grupo
+  const handleAddUserToGroup = async (groupId, userId) => {
+    try {
+      const groupDetailsResponse = await service.get(`/group/${groupId}`);
+      const group = groupDetailsResponse.data;
+      if (group.users.includes(userId)) {
+        console.log("El usuario ya está en este grupo.");
+        return;
+      }
+      await service.put(`/group/${groupId}/adduser/${userId}`);
+    } catch (error) {
+      console.error("Error al añadir usuario al grupo:", error);
+    }
+  };
+
   //* Funcion de barra de busqueda
   // Función para manejar cambios en el input de búsqueda
   const handleSearchInputChange = (event) => {
     setSearchProduct(event.target.value);
   };
-
   // Función para filtrar grupos según el producto ingresado en el input
   const handleSearch = () => {
     const searchValue = searchProduct.trim().toLowerCase();
@@ -132,13 +159,15 @@ function AllGroupsFilter() {
     );
     setAllGruopsFilterAdd(filteredGroups);
     setVisibleComponent(3);
-    setSearchProduct(""); 
+    setSearchProduct("");
   };
 
   return (
     <div>
-      <Navbar visibleComponent={visibleComponent} 
-        setVisibleComponent={setVisibleComponent} />
+      <Navbar
+        visibleComponent={visibleComponent}
+        setVisibleComponent={setVisibleComponent}
+      />
       <div>
         <input
           type="text"
@@ -197,27 +226,45 @@ function AllGroupsFilter() {
         <div>
           <h3>Grupos</h3>
           {allGruopsFilterAdd.map((group) => (
-            <Link key={group._id}>
-              <div style={{ backgroundColor: "white" }}>
-                <div>
-                  {group.products.map((element) => (
-                    <div key={element._id}>
-                      <img src={element.imagen} style={{ width: "150px" }} />
-                      <h4>{element.nombre}</h4>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <h3>{group.name}</h3>
-                  <h3>{group.liderUser.name}</h3>
-                  <p>Esta a {group.distancia ? group.distancia.toFixed(2) : 'N/A'} km de ti</p>
-                  <h5>
-                    Estado :{" "}
-                    {group.status === true ? <p>Abierto</p> : <p>Cerrado</p>}
-                  </h5>
-                </div>
+            <div
+              key={group._id}
+              style={{
+                backgroundColor: "white",
+                color: "black",
+                margin: "10px",
+              }}
+            >
+              <div>
+                {group.products.map((element) => (
+                  <div key={element._id}>
+                    <img src={element.imagen} style={{ width: "150px" }} />
+                    <h4>{element.nombre}</h4>
+                  </div>
+                ))}
               </div>
-            </Link>
+              <div>
+                <h3>{group.name}</h3>
+                <h3>{group.liderUser.name}</h3>
+                <p>
+                  Esta a {group.distancia ? group.distancia.toFixed(2) : "N/A"}{" "}
+                  km de ti
+                </p>
+                <h5>
+                  Estado :{" "}
+                  {group.status === true ? <p>Abierto</p> : <p>Cerrado</p>}
+                </h5>
+              </div>
+              <Link to={`/groupdetails/${group._id}`}>
+                <button
+                  onClick={() =>
+                    handleAddUserToGroup(group._id, ActiveUserId.ActiveUserId)
+                  }
+                  className="buttonAdd"
+                >
+                  +
+                </button>
+              </Link>
+            </div>
           ))}
         </div>
       )}

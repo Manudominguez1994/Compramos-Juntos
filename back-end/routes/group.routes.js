@@ -43,5 +43,39 @@ router.get("/allgroups", isAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+// Ruta GET para obtener los datos de un grupo específico
+router.get("/:groupId", isAuthenticated, async (req, res, next) => {
+  const { groupId } = req.params;
+  try {
+    const group = await Group.findById(groupId)
+      .populate("liderUser")
+      .populate("users")
+      .populate("products");
+    if (!group) {
+      return res.status(404).json({ message: "Grupo no encontrado" });
+    }
+    res.json(group);
+  } catch (error) {
+    next(error);
+  }
+});
+// Ruta PUT para añadir un usuario a un grupo específico
+router.put("/:groupId/adduser/:userId", isAuthenticated, async (req, res, next) => {
+  const { groupId, userId } = req.params;
+  try {
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Grupo no encontrado" });
+    }
+    if (group.users.includes(userId)) {
+      return res.status(400).json({ message: "El usuario ya está en este grupo" });
+    }
+    group.users.push(userId); // Añadir el usuario al array de usuarios del grupo
+    await group.save();
+    res.json(group);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;

@@ -28,9 +28,9 @@ function CreateGroup() {
   const [productArrayGroup, setProductArrayGroup] = useState([]);
 
   const array = [];
+  //Estado para reiniciar el selects
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
- 
 
   //Estados de Productos
   const [nameProduct, setNameProduct] = useState("");
@@ -116,6 +116,22 @@ function CreateGroup() {
       setImageProduct(selectedProduct.image);
     }
   };
+  //Para Borrar un producto creado por error
+  const handleRemoveProduct = async (index, productId) => {
+    try {
+      await service.post(`/product/delete/${productId}`);
+      const updatedProducts = [...productArrayGroup];
+      updatedProducts.splice(index, 1);
+      setProductArrayGroup(updatedProducts);
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setError(error.response.data.errorMessage);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/error");
+      }
+    }
+  };
 
   const handleCreateGroup = async (e) => {
     e.preventDefault();
@@ -153,7 +169,7 @@ function CreateGroup() {
     try {
       const response = await service.post("/product/create", {
         nombre: nameProduct,
-        imagen: imageProduct, 
+        imagen: imageProduct,
         categoria: categorieProduct,
         cantidad: quantityProduct,
         unidad: unidadProduct,
@@ -176,27 +192,26 @@ function CreateGroup() {
   const closeModal = () => {
     setError("");
   };
-
+  console.log(productArrayGroup);
   return (
     <div>
       <Navbar />
       <div className="error-message">
-      {errorMessage && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeModal}>
-              &times;
-            </span>
-            <p>{errorMessage}</p>
-            <button onClick={closeModal}>Cerrar</button>
+        {errorMessage && (
+          <div className="modal">
+            <div className="modal-content">
+              <span className="close" onClick={closeModal}>
+                &times;
+              </span>
+              <p>{errorMessage}</p>
+              <button onClick={closeModal}>Cerrar</button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
       </div>
       <h1>CreateGroup</h1>
       {allProducts ? (
         <>
-       
           <form>
             <label>Elige un nombre para tu grupo</label>
             <input type="text" name="name" onChange={handleNameGroup} />
@@ -227,12 +242,33 @@ function CreateGroup() {
       ) : (
         <p>Loading...</p>
       )}
+      <div>
+        <p>Productos añadidos : </p>
+        {productArrayGroup.map((product, index) => (
+          <div key={product._id}>
+            <img src={product.imagen} style={{ width: "150px" }} />
+            <h3>{product.nombre}</h3>
+            <p>
+              {product.cantidad}
+              {product.unidad}
+            </p>{" "}
+            a{" "}
+            <p>
+              {product.precio} el {product.unidad}
+            </p>
+            <button onClick={() => handleRemoveProduct(index, product._id)}>Eliminar</button>
+          </div>
+        ))}
+      </div>
       <label>
         <h3>Añade un producto al grupo de compra :</h3>
       </label>
       <h4>Categorias :</h4>
       <div>
-        <select value={selectedCategory} onChange={(e) => handleCategorieSelection(e.target.value)}>
+        <select
+          value={selectedCategory}
+          onChange={(e) => handleCategorieSelection(e.target.value)}
+        >
           <option value="">Selecciona una categoria</option>
           <option value="Alimentos">Alimentos</option>
           <option value="Higiene">Higiene</option>
@@ -241,7 +277,10 @@ function CreateGroup() {
         <br />
       </div>
       <h4>Selecciona un producto:</h4>
-      <select value={selectedProduct} onChange={(e) => handleNameProductChange(e.target.value)}>
+      <select
+        value={selectedProduct}
+        onChange={(e) => handleNameProductChange(e.target.value)}
+      >
         <option value="">Selecciona un producto</option>
         {filteredProducts.map((product) => (
           <option key={product.id} value={product.name}>
@@ -251,35 +290,38 @@ function CreateGroup() {
       </select>
 
       {showFormProduct === true ? (
-        <form onSubmit={handleCreateProduct}>
-          <div style={{ margin: "10px", textAlign: "center" }}>
-            <img
-              src={
-                nameProduct &&
-                filteredProducts.find((product) => product.name === nameProduct)
-                  ?.image
-              }
-              alt={nameProduct}
-              style={{ width: "150px" }}
-            />
-          </div>
-          <br />
-          <label>Cantidad:</label>
-          <input type="number" onChange={handleQuantityChange} />
-          <br />
-          <label>Unidad:</label>
-          <select onChange={(e) => handleUnidadChange(e.target.value)}>
-            <option value="">Selecciona unidad</option>
-            <option value="Kg">Kg</option>
-            <option value="unidad">Unidad</option>
-          </select>
-          <br />
-          <label>Precio por {unidadProduct}:</label>
-          <input type="number" onChange={handlePriceChange} />
-          <br />
+        <div>
+          <form onSubmit={handleCreateProduct}>
+            <div style={{ margin: "10px", textAlign: "center" }}>
+              <img
+                src={
+                  nameProduct &&
+                  filteredProducts.find(
+                    (product) => product.name === nameProduct
+                  )?.image
+                }
+                alt={nameProduct}
+                style={{ width: "150px" }}
+              />
+            </div>
+            <br />
+            <label>Cantidad:</label>
+            <input type="number" onChange={handleQuantityChange} />
+            <br />
+            <label>Unidad:</label>
+            <select onChange={(e) => handleUnidadChange(e.target.value)}>
+              <option value="">Selecciona unidad</option>
+              <option value="Kg">Kg</option>
+              <option value="unidad">Unidad</option>
+            </select>
+            <br />
+            <label>Precio por {unidadProduct}:</label>
+            <input type="number" onChange={handlePriceChange} />
+            <br />
 
-          <button>Añadir producto</button>
-        </form>
+            <button>Añadir producto</button>
+          </form>
+        </div>
       ) : null}
       <br />
       <button onClick={handleCreateGroup}>Create Group</button>

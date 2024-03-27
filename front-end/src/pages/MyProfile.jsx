@@ -32,28 +32,35 @@ function MyProfile() {
   return (
     <div>
       <Navbar />
-      <h1>My Profile</h1>
-      {editButton === true ? (
-        infoUser && (
-          <>
-            <img
-              src={infoUser.imagen}
-              alt="Profile Picture"
-              style={{ width: "200px" }}
-            />
-            <h3>{infoUser.name}</h3>
-            <p>{infoUser.email}</p>
-            <p>{infoUser.dateborn.split("T")[0].split("-").reverse().join("-")}</p>
-            <button onClick={handleSetEditButton}>Edit Profile</button>
-          </>
-        )
-      ) : (
-        <EditProfile
-          handleSetEditButton={handleSetEditButton}
-          infoUser={infoUser}
-          getUserInfo={getUserInfo}
-        />
-      )}
+      <div>
+        <h1>My Profile</h1>
+        {editButton === true ? (
+          infoUser && (
+            <>
+              <img
+                src={infoUser.imagen}
+                alt="Profile Picture"
+                style={{ width: "200px" }}
+              />
+              <h3>{infoUser.name}</h3>
+              <p>{infoUser.email}</p>
+              <p>
+                {infoUser.dateborn.split("T")[0].split("-").reverse().join("-")}
+              </p>
+              <button onClick={handleSetEditButton}>Edit Profile</button>
+            </>
+          )
+        ) : (
+          <EditProfile
+            handleSetEditButton={handleSetEditButton}
+            infoUser={infoUser}
+            getUserInfo={getUserInfo}
+          />
+        )}
+      </div>
+      <div>
+        Grupos en los que me encuentro
+      </div>
     </div>
   );
 }

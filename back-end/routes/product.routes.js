@@ -21,9 +21,9 @@ router.get("/allproducts", isAuthenticated, (req, res, next) => {
   }
 });
 // Post "/api/product/create"
-router.post("/create", isAuthenticated,async (req, res, next) => {
+router.post("/create", isAuthenticated, async (req, res, next) => {
   const { nombre, imagen, categoria, cantidad, precio, unidad } = req.body;
- 
+
   try {
     const response = await Product.create({
       nombre,
@@ -33,8 +33,25 @@ router.post("/create", isAuthenticated,async (req, res, next) => {
       precio,
       unidad,
     });
-    
+
     res.json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Post "/api/product/:productId" Borrar un prodcuto concreto
+router.post("/delete/:productId", isAuthenticated, async (req, res, next) => {
+  const productId = req.params.productId;
+
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+
+    if (deletedProduct) {
+      res.json({ message: "Producto eliminado correctamente", deletedProduct });
+    } else {
+      res.status(404).json({ message: "Producto no encontrado" });
+    }
   } catch (error) {
     next(error);
   }

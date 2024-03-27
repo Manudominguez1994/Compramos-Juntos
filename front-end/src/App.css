@@ -56,3 +56,20 @@ a{
  
   z-index: 999; /* Asegura que esté en la parte superior */
 }
+/*boton añadirme a un grupo*/
+.buttonAdd {
+  width: 30px;
+  height: 30px;
+  background-color: #000000;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.buttonAdd:hover {
+  background-color: #5a5959;
+}
