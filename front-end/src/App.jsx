@@ -4,7 +4,6 @@ import './App.css'
 import IsPrivate from './components/IsPrivate'
 
 import Home from './pages/Home'
-import Principal from './pages/Principal'
 import MyProfile from './pages/MyProfile'
 import NotFound from './pages/NotFound'
 import Error from './pages/Error'
@@ -27,10 +26,9 @@ function App() {
 
         {/*Private Page*/}
 
-        <Route path='/home' element={<IsPrivate><Principal/></IsPrivate>}/>
+        <Route path='/home' element={<IsPrivate><AllGroupsFilter/></IsPrivate>}/>
         <Route path='/myprofile' element={<IsPrivate><MyProfile/></IsPrivate>}/>
         <Route path='/creategroup' element={<IsPrivate><CreateGroup/></IsPrivate>}/>
-        <Route path='/allGroups' element={<IsPrivate><AllGroupsFilter/></IsPrivate>}/>
         <Route path='/groupdetails/:groupid' element={<IsPrivate><GroupDetails/></IsPrivate>}/>
 
 

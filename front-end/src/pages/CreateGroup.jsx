@@ -28,6 +28,9 @@ function CreateGroup() {
   const [productArrayGroup, setProductArrayGroup] = useState([]);
 
   const array = [];
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState("");
+ 
 
   //Estados de Productos
   const [nameProduct, setNameProduct] = useState("");
@@ -37,6 +40,7 @@ function CreateGroup() {
   const [unidadProduct, setUnidadProduct] = useState("");
   const [priceUnit, setPriceUnit] = useState(0);
   const [showFormProduct, setShowFormProduct] = useState(false);
+
   //Mapa
   const [center, setCenter] = useState([4.60971, -74.08175]);
   const [clickedPosition, setClickedPosition] = useState(null);
@@ -88,9 +92,9 @@ function CreateGroup() {
   };
   //Funciones Producto
   const handleCategorieSelection = (selectedCategorie) => {
-    setCategorieProduct(selectedCategorie);
+    setCategorieProduct(selectedCategorie); // Actualizar el estado de la categoría seleccionada
+    setSelectedCategory(selectedCategorie); // Actualizar el estado del selector de categoría
   };
-
   const handleQuantityChange = (e) => {
     setQuantityProduct(e.target.value);
   };
@@ -104,6 +108,7 @@ function CreateGroup() {
   const handleNameProductChange = (productName) => {
     setNameProduct(productName);
     setShowFormProduct(true);
+    setSelectedProduct(productName);
     const selectedProduct = filteredProducts.find(
       (product) => product.name === productName
     );
@@ -156,6 +161,8 @@ function CreateGroup() {
       });
       setShowFormProduct(false);
       setProductArrayGroup([...productArrayGroup, response.data]);
+      setSelectedCategory("");
+      setSelectedProduct("");
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data.errorMessage);
@@ -225,7 +232,7 @@ function CreateGroup() {
       </label>
       <h4>Categorias :</h4>
       <div>
-        <select onChange={(e) => handleCategorieSelection(e.target.value)}>
+        <select value={selectedCategory} onChange={(e) => handleCategorieSelection(e.target.value)}>
           <option value="">Selecciona una categoria</option>
           <option value="Alimentos">Alimentos</option>
           <option value="Higiene">Higiene</option>
@@ -234,7 +241,7 @@ function CreateGroup() {
         <br />
       </div>
       <h4>Selecciona un producto:</h4>
-      <select onChange={(e) => handleNameProductChange(e.target.value)}>
+      <select value={selectedProduct} onChange={(e) => handleNameProductChange(e.target.value)}>
         <option value="">Selecciona un producto</option>
         {filteredProducts.map((product) => (
           <option key={product.id} value={product.name}>
