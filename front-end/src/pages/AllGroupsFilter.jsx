@@ -46,6 +46,18 @@ function AllGroupsFilter() {
     }
   };
 
+  //*Funciones cambio de componente
+  const handleSetComponent = (componentNumber, value) => {
+    if (componentNumber === 2) {
+      setThisCategory(value);
+      const arrayfilter = allProducts.filter(
+        (item) => item.categorie === value
+      );
+      setFilteredProducts(arrayfilter);
+    }
+    setVisibleComponent(componentNumber);
+  };
+
   //*Funcion para comparar las coordenadas
   function calcularDistancia(lat1, lon1, lat2, lon2) {
     const radioTierra = 6371;
@@ -66,19 +78,7 @@ function AllGroupsFilter() {
     return distancia;
   }
 
-  //*Funciones cambio de componente
-  const handleSetComponent = (componentNumber, value) => {
-    if (componentNumber === 2) {
-      setThisCategory(value);
-      const arrayfilter = allProducts.filter(
-        (item) => item.categorie === value
-      );
-      setFilteredProducts(arrayfilter);
-    }
-    setVisibleComponent(componentNumber);
-  };
 
-  //? Grupos filtrado por producto
   //*Peticion de todos los grupos
   const getAllGroups = async () => {
     try {
@@ -90,6 +90,7 @@ function AllGroupsFilter() {
     }
   };
 
+  //*Filtrado de los grupos
   const handleGroupFilterProduct = (value) => {
     //! Filtro de Producto
     const arrayGroupFilter = allGroups.filter((group) =>
@@ -100,7 +101,7 @@ function AllGroupsFilter() {
     // Calcula la distancia entre el usuario y cada grupo
     const latUsuario = infoUser.coordinates[0];
     const lonUsuario = infoUser.coordinates[1];
-    const gruposFiltrados = arrayGroupFilter
+    const groupFilter1 = arrayGroupFilter
       .map((group) => {
         const distancia = calcularDistancia(
           latUsuario,
@@ -110,21 +111,15 @@ function AllGroupsFilter() {
         );
         return { ...group, distancia }; // Añade la distancia al objeto del grupo
       })
-      .filter((group) => group.distancia < 50);
-
-    const filterDef = gruposFiltrados.filter((group) => {
-      console.log("Usuarios en el grupo:", group.users);
-      console.log("ID de usuario activo:", ActiveUserId.ActiveUserId);
+      .filter((group) => group.distancia < 20);
+    //Ordena de menos a mayor
+    groupFilter1.sort((a, b) => a.distancia - b.distancia);
+    //Filtro usuario activo
+    const filterDef = groupFilter1.filter((group) => {
       return group.users.every(
         (user) => user._id !== ActiveUserId.ActiveUserId
       );
     });
-
-    console.log(gruposFiltrados, "grupos sin el filtro");
-    console.log(
-      filterDef,
-      "grupos en los que es usuario Nooooooooooooo se encuentra"
-    );
     setAllGruopsFilterAdd(filterDef);
     handleSetComponent(3);
   };
@@ -149,7 +144,7 @@ function AllGroupsFilter() {
   const handleSearchInputChange = (event) => {
     setSearchProduct(event.target.value);
   };
-  // Función para filtrar grupos según el producto ingresado en el input
+  //* Función para filtrar grupos según el producto ingresado en el input
   const handleSearch = () => {
     const searchValue = searchProduct.trim().toLowerCase();
     const filteredGroups = allGroups.filter((group) =>
@@ -223,17 +218,11 @@ function AllGroupsFilter() {
       )}
 
       {visibleComponent === 3 && (
-        <div>
+        <div >
           <h3>Grupos</h3>
           {allGruopsFilterAdd.map((group) => (
-            <div
-              key={group._id}
-              style={{
-                backgroundColor: "white",
-                color: "black",
-                margin: "10px",
-              }}
-            >
+            <div key={group._id}style={{ backgroundColor: "white", color: "black", margin: "10px", }}>
+              <Link to={`/groupdetails/${group._id}`}>
               <div>
                 {group.products.map((element) => (
                   <div key={element._id}>
@@ -254,15 +243,7 @@ function AllGroupsFilter() {
                   {group.status === true ? <p>Abierto</p> : <p>Cerrado</p>}
                 </h5>
               </div>
-              <Link to={`/groupdetails/${group._id}`}>
-                <button
-                  onClick={() =>
-                    handleAddUserToGroup(group._id, ActiveUserId.ActiveUserId)
-                  }
-                  className="buttonAdd"
-                >
-                  +
-                </button>
+             
               </Link>
             </div>
           ))}

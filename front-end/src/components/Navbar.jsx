@@ -22,7 +22,8 @@ function Navbar(visibleComponent, setVisibleComponent) {
       <Link to="/home" onClick={gotoHome}>
         Home
       </Link>
-      <Link to="/myprofile">My Profile</Link>
+      <Link to={"/mygroups"}>Mis grupos</Link>
+      <Link to="/myprofile">Mi perfil</Link>
 
       <button onClick={ejectHandLogOut}>Cerrar Sesión</button>
     </div>

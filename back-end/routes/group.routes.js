@@ -24,14 +24,13 @@ router.post("/create", isAuthenticated, async (req, res, next) => {
       products,
       users,
     });
-    res.json("grupocreado");
+    res.json(response);
   } catch (error) {
     next(error);
   }
 });
 
 //GET => /allgroups Recibir todos los grupos
-
 router.get("/allgroups", isAuthenticated, async (req, res, next) => {
   try {
     const response = await Group.find()

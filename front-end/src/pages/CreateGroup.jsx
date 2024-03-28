@@ -151,7 +151,7 @@ function CreateGroup() {
         products: productArrayGroup,
         users: array,
       });
-
+      
       navigate(`/groupdetails/${response.data._id}`);
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -192,7 +192,7 @@ function CreateGroup() {
   const closeModal = () => {
     setError("");
   };
-  console.log(productArrayGroup);
+  // console.log(productArrayGroup);
   return (
     <div>
       <Navbar />
